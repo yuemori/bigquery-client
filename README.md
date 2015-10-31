@@ -11,6 +11,7 @@ A Ruby interface to the BigQuery API.
 ```
 
 ## Getting Started
+### Use private_key
 
 ```ruby
 require "bigquery-client"
@@ -22,6 +23,22 @@ client = BigQuery::Client.new(
   private_key_path:       "/path/to/keyfile.p12",
   private_key_passphrase: "notasecret",
   auth_method:            "private_key"
+)
+
+client.sql "SELECT * FROM publicdata:samples.wikipedia LIMIT 10"
+```
+
+### Use client_secrets
+
+```ruby
+require "bigquery-client"
+
+client = BigQuery::Client.new(
+  project:               "your-project-42",
+  dataset:               "your_dataset",
+  client_secrets_path:   "/path/to/client_secrets.json",
+  credential_store_file: "/path/to/credential_store_file.json",
+  auth_method:           "client_secrets"
 )
 
 client.sql "SELECT * FROM publicdata:samples.wikipedia LIMIT 10"

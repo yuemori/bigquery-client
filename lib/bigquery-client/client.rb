@@ -74,6 +74,21 @@ module BigQuery
         auth = Google::APIClient::ComputeServiceAccount.new
         auth.fetch_access_token!
         @client.authorization = auth
+      when 'client_secrets'
+        file_storage = Google::APIClient::Storage.new(Google::APIClient::FileStore.new(@credential_store_file))
+        auth = file_storage.authorize
+
+        if file_storage.authorization.nil?
+          client_secrets = Google::APIClient::ClientSecrets.load(@client_secrets_path)
+          flow = Google::APIClient::InstalledAppFlow.new(
+            client_id: client_secrets.client_id,
+            client_secret: client_secrets.client_secret,
+            scope: 'https://www.googleapis.com/auth/bigquery'
+          )
+
+          auth = flow.authorize(file_storage)
+        end
+        @client.authorization = auth
       end
     end
   end
